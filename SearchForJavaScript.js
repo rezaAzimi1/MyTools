@@ -1,3 +1,5 @@
+<input class="form-control" onkeyup="ReplaceListContent(this)" id="myInput" type="text" placeholder="Search..">
+<div style="position: absolute;z-index: 1 "></div>
 <script>
     var selectedElm
     function ReplaceListContent_SelectText(elm) {
