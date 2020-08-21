@@ -1,0 +1,76 @@
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+<input type="file" id="img-selector" accept=".jpg, .jpeg, .png" style="display:none">
+<button onclick="document.querySelector('#img-selector').click()">add image</button>
+<input type="file" id="video-selector" accept=".mp4" style="display:none">
+<button onclick="document.querySelector('#video-selector').click()">add video</button>
+<div id="DataStack">
+
+</div>
+
+<script>
+
+    var ImageSelector = document.getElementById('img-selector');
+    ImageSelector.addEventListener('change',
+        (event) => {
+            var fileList = event.target.files;
+            readImage(fileList[0])
+            ImageSelector.value=null
+        });
+
+    function readImage(file) {
+        if (file.type && file.type.indexOf('image') === -1) {
+            console.log('File is not an image.', file.type, file);
+            return;
+        }
+
+        var reader = new FileReader();
+        reader.addEventListener('load',
+            (event) => {
+                //console.log(event.target.result)
+                $.ajax({
+                    url: "./Home/saveImageFile",
+                    type: "POST",
+                    data: {
+                        FileContent: event.target.result.split(',')[1],
+                        FileName: file.name
+                    },
+                    async: true
+                }).done((result) => {
+                    console.log(result.imageUrl);
+                    document.querySelector("#DataStack").innerHTML += `<img src="${result.imageUrl}" />`
+                })
+            });
+        reader.readAsDataURL(file);
+    }
+    //ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+    var VideoSelector = document.getElementById('video-selector');
+    VideoSelector.addEventListener('change',
+        (event) => {
+            var data = new FormData();
+            data.append('file', jQuery('#video-selector')[0].files[0]);
+            readVideo(data)
+            VideoSelector.value=null
+        }
+    )
+
+    function readVideo(data) {
+        jQuery.ajax({
+            url: 'Home/Upload',
+            data: data,
+            cache: false,
+            contentType: false,
+            processData: false,
+            method: 'POST',
+            type: 'POST'
+        }).done((result) => {
+            console.log(result.videoUrl);
+            document.querySelector("#DataStack").innerHTML += `<video src="${result.videoUrl}" controls/>`
+        })
+    }
+</script>
+
+
