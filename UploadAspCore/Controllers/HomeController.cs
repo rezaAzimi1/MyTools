@@ -38,6 +38,9 @@ namespace UploadAspCore.Controllers
             });
         }
         [HttpPost]
+        [RequestFormLimits(ValueLengthLimit = int.MaxValue, MultipartBodyLengthLimit = int.MaxValue)]
+        [DisableRequestSizeLimit]
+        [Consumes("multipart/form-data")] 
         public async Task<IActionResult> Upload
             (IFormFile file, [FromServices] IHostingEnvironment env)
         {
